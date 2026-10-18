@@ -1,3 +1,4 @@
+import { asset_url } from './AssetPath.ts'
 // Original code from
 // https://github.com/mrdoob/three.js/blob/master/src/helpers/SkeletonHelper.js
 // and ideas from
@@ -50,7 +51,7 @@ const bone_category_colors: Record<BoneCategory, number> = {
 let shared_joint_texture: Texture | undefined
 
 function get_joint_texture (): Texture {
-  shared_joint_texture ??= new TextureLoader().load('/images/skeleton-joint-point.png')
+  shared_joint_texture ??= new TextureLoader().load(asset_url('/images/skeleton-joint-point.png'))
   return shared_joint_texture
 }
 

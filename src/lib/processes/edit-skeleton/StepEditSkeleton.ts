@@ -1,3 +1,4 @@
+import { asset_url } from '../../AssetPath.ts'
 import { UI } from '../../UI.ts'
 import { Generators } from '../../Generators.ts'
 import { Utility } from '../../Utilities.ts'
@@ -60,7 +61,7 @@ export class StepEditSkeleton extends EventTarget {
   private enable_arm_plane_correction: boolean = false
   private arm_plane_offset: number = 0.0
 
-  private readonly joint_texture = new TextureLoader().load('/images/skeleton-joint-point.png')
+  private readonly joint_texture = new TextureLoader().load(asset_url('/images/skeleton-joint-point.png'))
 
   private _added_event_listeners: boolean = false
   private readonly preview_plane_manager: PreviewPlaneManager = PreviewPlaneManager.getInstance()

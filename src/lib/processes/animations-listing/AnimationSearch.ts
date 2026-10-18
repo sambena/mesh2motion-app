@@ -1,3 +1,4 @@
+import { asset_url } from '../../AssetPath.ts'
 import { type ThemeManager } from '../../ThemeManager'
 import { SkeletonType } from '../../enums/SkeletonType'
 import { RigConfig } from '../../RigConfig'
@@ -21,9 +22,9 @@ export class AnimationSearch extends EventTarget {
   private static readonly mirror_mode_cycle: AnimationMirrorExportMode[] = ['none', 'mirrored', 'both']
 
   private static readonly mirror_mode_icons: Record<AnimationMirrorExportMode, string> = {
-    none: '/images/icons/mirror.svg',
-    mirrored: '/images/icons/mirror.svg',
-    both: '/images/icons/mirror-both.svg'
+    none: asset_url('/images/icons/mirror.svg'),
+    mirrored: asset_url('/images/icons/mirror.svg'),
+    both: asset_url('/images/icons/mirror-both.svg')
   }
 
   constructor (filter_input_id: string, animation_list_container_id: string, theme_manager: ThemeManager, skeleton_type: SkeletonType) {
@@ -303,7 +304,7 @@ export class AnimationSearch extends EventTarget {
 
       const preview_data_src_attribute = is_custom_animation
         ? ''
-        : ` data-src="../animpreviews/${preview_folder}/${theme_name}_${anim_name}.mp4"`
+        : ` data-src="${asset_url(`animpreviews/${preview_folder}/${theme_name}_${anim_name}.mp4`)}"`
 
       const custom_animation_badge_html = is_custom_animation
         ? '<span class="anim-custom-badge" title="Custom animation" aria-label="Custom animation">C</span>'

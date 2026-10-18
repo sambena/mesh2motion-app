@@ -1,3 +1,4 @@
+import { asset_url } from './AssetPath.ts'
 import { StringStreamHandler } from "three/examples/jsm/libs/fflate.module.js";
 
 /**
@@ -29,7 +30,7 @@ export class PlatformManager {
     if (this.platform === Platform.Desktop) {
       const link = document.createElement('link');
       link.rel = 'stylesheet';
-      link.href = '/desktop.css';
+      link.href = asset_url('/desktop.css');
       document.head.appendChild(link);
     }
 

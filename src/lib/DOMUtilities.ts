@@ -1,3 +1,4 @@
+import { asset_url } from './AssetPath.ts'
 import { RigConfig } from './RigConfig.ts'
 import {
   BoneNamingStructure,
@@ -36,7 +37,7 @@ export class DOMUtilities {
   static readonly top_nav_links: TopNavLinksConfig = {
     support_href: 'https://support.mesh2motion.org',
     github_href: 'https://github.com/scottpetrovic/mesh2motion-app',
-    github_icon_src: '../images/github-white-icon.png'
+    github_icon_src: asset_url('../images/github-white-icon.png')
   }
 
   static readonly settings_defaults: SettingsDefaultsConfig = {
@@ -58,7 +59,7 @@ export class DOMUtilities {
 
   static readonly download_control_defaults: DownloadControlConfig = {
     export_button_id: 'export-button',
-    download_icon_src: 'images/icons/download.svg',
+    download_icon_src: asset_url('images/icons/download.svg'),
     tooltip: 'Exporting will combine all selected animations into a single downloadable file.'
   }
 
@@ -90,17 +91,17 @@ export class DOMUtilities {
     mount.innerHTML = `
       <div id="header-ui">
         <div>
-          <img class="nav-icon" src="/images/mouse-left.svg" style="vertical-align: middle" />
+          <img class="nav-icon" src="${asset_url('/images/mouse-left.svg')}" style="vertical-align: middle" />
           Rotate
         </div>
 
         <div>
-          <img class="nav-icon" src="/images/mouse-right.svg" style="vertical-align: middle" />
+          <img class="nav-icon" src="${asset_url('/images/mouse-right.svg')}" style="vertical-align: middle" />
           Pan
         </div>
 
         <div>
-          <img class="nav-icon" src="/images/mouse-middle.svg" style="vertical-align: middle" />
+          <img class="nav-icon" src="${asset_url('/images/mouse-middle.svg')}" style="vertical-align: middle" />
           Zoom
         </div>
       </div>
@@ -119,7 +120,7 @@ export class DOMUtilities {
 
         <div id="play-controls">
           <button id="play-pause-button" class="animation-control-button" disabled>
-             <img src="../images/icons/play.svg" alt="Play" width="14" height="14" />
+             <img src="${asset_url('../images/icons/play.svg')}" alt="Play" width="14" height="14" />
           </button>
 
           <span>
@@ -132,14 +133,14 @@ export class DOMUtilities {
           <div id="skeleton-toggle" class="styled-checkbox icon-toggle">
             <input type="checkbox" id="show-skeleton-checkbox" name="show-skeleton" value="show" style="display: none" />
             <label for="show-skeleton-checkbox" data-tippy-content="Show skeleton" tabindex="0" style="border-radius: 0; padding: 0.4rem;">
-              <img src="../images/icons/bone-display.svg" class="action-icon" alt="Show skeleton" style="user-select: none" />
+              <img src="${asset_url('../images/icons/bone-display.svg')}" class="action-icon" alt="Show skeleton" style="user-select: none" />
             </label>
           </div>
 
           <div id="wireframe-toggle" class="styled-checkbox icon-toggle">
             <input type="checkbox" id="wireframe-checkbox" name="wireframe" value="wireframe" style="display: none" />
             <label for="wireframe-checkbox" data-tippy-content="Toggle wireframe" tabindex="0" style="border-radius: 0; padding: 0.4rem;">
-              <img src="../images/icons/wireframe.svg" class="action-icon" alt="Toggle wireframe" style="user-select: none" />
+              <img src="${asset_url('../images/icons/wireframe.svg')}" class="action-icon" alt="Toggle wireframe" style="user-select: none" />
             </label>
           </div>
         </div>
@@ -158,12 +159,12 @@ export class DOMUtilities {
         <div style="display: flex; flex-direction: row; align-items: center; gap: 1rem; justify-content: center;">
           <label style="display: inline-flex">Expand / Contract Arms</label>
 
-          <img src="/images/icons/help.svg" alt="Help" width="20" height="20"
+          <img src="${asset_url('/images/icons/help.svg')}" alt="Help" width="20" height="20"
             data-tippy-content="Fine-tune arm spread across all animations for heavier or skinnier characters." />
 
           <button class="secondary-button" id="reset-arm-extension-button"
             aria-label="Reset arm extension" data-tippy-content="Reset">
-            <img src="/images/icons/reset.svg" alt="Reset Arm Extension" width="20" height="20" />
+            <img src="${asset_url('/images/icons/reset.svg')}" alt="Reset Arm Extension" width="20" height="20" />
           </button>
         </div>
 
@@ -262,7 +263,7 @@ export class DOMUtilities {
     if (DOMUtilities.is_retarget_page()) {
       return {
         export_button_id: 'export-retargeting-button',
-        download_icon_src: '../images/icons/download.svg',
+        download_icon_src: asset_url('../images/icons/download.svg'),
         tooltip: defaults.tooltip
       }
     }
@@ -272,10 +273,10 @@ export class DOMUtilities {
 
   private static get_download_settings_icon_src (): string {
     if (DOMUtilities.is_retarget_page()) {
-      return '../images/icons/arrow-dropdown.svg'
+      return asset_url('../images/icons/arrow-dropdown.svg')
     }
 
-    return 'images/icons/arrow-dropdown.svg'
+    return asset_url('images/icons/arrow-dropdown.svg')
   }
 
   private static get_fbx_preset_options_markup (): string {
@@ -401,7 +402,7 @@ export class DOMUtilities {
       <div id="settings-dropdown-container" class="nav-dropdown">
         <button id="settings-toggle" class="nav-icon-button" aria-expanded="false" aria-controls="settings-dropdown-content" aria-haspopup="true" aria-label="Open settings">
           
-        <img src="/images/icons/settings.svg" alt="Settings" width="30" height="30" />
+        <img src="${asset_url('/images/icons/settings.svg')}" alt="Settings" width="30" height="30" />
         
         </button>
 

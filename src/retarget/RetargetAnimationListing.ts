@@ -118,7 +118,7 @@ export class RetargetAnimationListing extends EventTarget {
   }
 
   public load_and_apply_default_animation_to_skinned_mesh (): void {
-    this.animation_loader.set_animations_file_path('../../animations/')
+    this.animation_loader.set_animations_file_path('../animations/')
     this.animation_clips_loaded = []
     this.animation_mixer = new AnimationMixer(new Object3D())
 
