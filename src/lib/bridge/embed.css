@@ -4,6 +4,11 @@ html.m2m-embed {
   --navigation-height: 0px;
 }
 
+html.m2m-embed #animations-items {
+  width: 24rem !important;
+  max-width: calc(100vw - 2rem);
+}
+
 html.m2m-embed nav,
 html.m2m-embed #build-version,
 html.m2m-embed .request-animation-link {

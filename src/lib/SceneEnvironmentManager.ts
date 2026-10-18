@@ -95,6 +95,22 @@ export class SceneEnvironmentManager {
     this.controls?.update()
   }
 
+  /** Points the camera at a box from its current direction, near enough that the box fills the view. */
+  public frame_bounds (box: THREE.Box3): void {
+    if (this.controls === undefined || box.isEmpty()) return
+    const center = box.getCenter(new THREE.Vector3())
+    const size = box.getSize(new THREE.Vector3())
+    const radius = Math.max(size.x, size.y, size.z) * 0.5
+    const fov = THREE.MathUtils.degToRad(this.camera.fov)
+    const distance = Math.min(Math.max(radius / Math.sin(fov / 2) * 1.15, this.controls.minDistance), this.controls.maxDistance)
+    const direction = this.camera.position.clone().sub(this.controls.target)
+    if (direction.lengthSq() < 1e-8) direction.set(0.6, 0.4, 1)
+    direction.normalize()
+    this.controls.target.copy(center)
+    this.camera.position.copy(center).addScaledVector(direction, distance)
+    this.controls.update()
+  }
+
   public frame_change (): void {
     if (this.controls === undefined) {
       return

@@ -1,3 +1,4 @@
+import { Box3 } from 'three'
 import * as THREE from 'three'
 import { CustomTransformControls } from './lib/components/CustomTransformControls.ts'
 import type { CustomViewHelper } from './lib/CustomViewHelper.ts'
@@ -178,6 +179,12 @@ export class Mesh2MotionEngine {
 
   public set_fog_enabled (enabled: boolean): void {
     this.scene_environment.set_fog_enabled(enabled)
+  }
+
+  /** Frames the loaded model: the camera centres on it and moves in until it fills the view. */
+  public frame_model (): void {
+    const box = new Box3().setFromObject(this.load_model_step.model_meshes())
+    this.scene_environment.frame_bounds(box)
   }
 
   public enable_orbit_controls (enabled: boolean): void {

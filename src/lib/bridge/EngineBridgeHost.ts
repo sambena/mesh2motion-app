@@ -83,6 +83,7 @@ export class EngineBridgeHost implements BridgeHost {
       const step = bridge_step((event as CustomEvent<ProcessStep>).detail)
       if (step === null || step === this.last_step) return
       if (this.last_step === 'edit' && step === 'animate') this.send_joints_if_changed(true)
+      if (this.embedded && (step === 'edit' || step === 'animate')) engine_frame(engine)
       if (step !== 'animate') this.animations_loaded = false
       this.last_step = step
       this.notify({ type: 'stepChanged', step })
@@ -90,11 +91,24 @@ export class EngineBridgeHost implements BridgeHost {
 
     engine.animations_listing_step.addEventListener('animations-loaded', () => {
       this.animations_loaded = true
+      if (this.embedded) engine_frame(engine)
       engine.animations_listing_step.animation_search?.addEventListener('export-options-changed', () => {
         if (!this.quiet) this.notify({ type: 'clips', ...this.clips_result() })
       })
       this.notify({ type: 'clips', ...this.clips_result() })
     })
+
+    // embedded, a click on a clip's picture also ticks it (it still plays), so what you click is what you export
+    if (this.embedded) {
+      document.addEventListener('click', (event: MouseEvent) => {
+        const play = (event.target as HTMLElement | null)?.closest('[data-action="play-animation"]')
+        const row = play?.closest('.anim-item, .anim-custom-item')
+        const box = row?.querySelector('input[type="checkbox"]') as HTMLInputElement | null | undefined
+        if (box === null || box === undefined || box.checked) return
+        box.checked = true
+        box.dispatchEvent(new Event('change', { bubbles: true }))
+      })
+    }
 
     // the user finished a drag, an undo or a key press in the skeleton editor
     const after_edit = (): void => { setTimeout(() => { this.send_joints_if_changed(false) }, 0) }
@@ -132,6 +146,7 @@ export class EngineBridgeHost implements BridgeHost {
       this.place_joints(fitted.joints, true)
     }
     this.remember_joints()
+    engine_frame(this.engine)
 
     if (request.step === 'animate') {
       await this.goto('animate')
@@ -354,4 +369,9 @@ export class EngineBridgeHost implements BridgeHost {
     const base = file.replace(/\.[^.]*$/, '').replace(/[^A-Za-z0-9_-]+/g, '_')
     return base === '' ? 'exported-model' : base
   }
+}
+
+/** Frames the model once the browser has laid the frame out (the canvas may only now have its size). */
+function engine_frame (engine: Mesh2MotionEngine): void {
+  requestAnimationFrame(() => { engine.frame_model() })
 }
