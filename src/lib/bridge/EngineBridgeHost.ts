@@ -371,7 +371,32 @@ export class EngineBridgeHost implements BridgeHost {
   }
 }
 
-/** Frames the model once the browser has laid the frame out (the canvas may only now have its size). */
+/** Frames the model once the browser has laid the frame out (the canvas may only now have its size), centred in
+    the part of the view Mesh2Motion's tool panel leaves free. */
 function engine_frame (engine: Mesh2MotionEngine): void {
-  requestAnimationFrame(() => { engine.frame_model() })
+  requestAnimationFrame(() => {
+    engine.frame_model()
+    center_beside_panel(engine)
+  })
 }
+
+/** The tool panel sits over the right of the canvas; shift the picture left by half its width (a view offset, so
+    orbiting and picking still work), and keep it so when the frame is resized. */
+function center_beside_panel (engine: Mesh2MotionEngine): void {
+  const apply = (): void => {
+    const panel = document.getElementById('tool-panel')
+    const width = window.innerWidth
+    const height = window.innerHeight
+    const covered = panel === null ? 0 : Math.max(0, width - panel.getBoundingClientRect().left)
+    if (covered <= 0 || covered >= width * 0.8) { engine.camera.clearViewOffset(); return }
+    engine.camera.setViewOffset(width, height, covered / 2, 0, width, height)
+    engine.camera.updateProjectionMatrix()
+  }
+  apply()
+  if (!resize_hooked) {
+    resize_hooked = true
+    window.addEventListener('resize', () => { requestAnimationFrame(apply) })
+  }
+}
+
+let resize_hooked = false
