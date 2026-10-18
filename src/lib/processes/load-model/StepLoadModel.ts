@@ -46,6 +46,9 @@ export class StepLoadModel extends EventTarget {
   // controls whether to preserve all objects (bones, lights, etc.) or strip to meshes only
   private preserve_skinned_mesh: boolean = false
 
+  // factor the model was shrunk by on import when it was too tall (1 when left alone)
+  private import_scale_factor: number = 1.0
+
   // for debugging, let's count these to help us test performance things better
   vertex_count = 0
   triangle_count = 0
@@ -172,6 +175,7 @@ export class StepLoadModel extends EventTarget {
     this.mesh_has_broken_material = false
     this.preserve_skinned_mesh = false
     this.import_analysis = null
+    this.import_scale_factor = 1.0
   }
 
   public reset_model_position (): void {
@@ -211,12 +215,16 @@ export class StepLoadModel extends EventTarget {
       this.gltf_loader.load(model_file_path as string, (gltf) => {
         const loaded_scene: Scene = gltf.scene
         this.process_loaded_scene(loaded_scene)
+      }, undefined, (error: unknown) => {
+        console.error('Failed to load GLB model:', error)
+        this.dispatchEvent(new CustomEvent('modelLoadFailed', { detail: error }))
       })
     } else if (file_extension === 'zip') {
       console.log('ZIP file can contain GLTF+BIN model data')
       this.handle_zip_file(model_file_path)
     } else {
       console.error('Unsupported file format to load. Only acccepts FBX, (ZIP)GLTF+BIN, GLB:', model_file_path)
+      this.dispatchEvent(new CustomEvent('modelLoadFailed', { detail: new Error(`unsupported model format: ${file_extension}`) }))
     }
   }
 
@@ -238,6 +246,7 @@ export class StepLoadModel extends EventTarget {
       this.process_loaded_scene(loaded_scene)
     }).catch((error) => {
       console.warn('some type of error', error)
+      this.dispatchEvent(new CustomEvent('modelLoadFailed', { detail: error }))
     })
   }
 
@@ -322,6 +331,7 @@ export class StepLoadModel extends EventTarget {
       } else {
         new ModalDialog('Error loading model', 'No Mesh found in model file').show()
       }
+      this.dispatchEvent(new CustomEvent('modelLoadFailed', { detail: new Error('no mesh found in the model file') }))
       return
     }
 
@@ -349,7 +359,7 @@ export class StepLoadModel extends EventTarget {
 
     // Some objects come in very large, which makes it harder to work with
     // scale everything down to a max height. mutate the clean scene object
-    ModelCleanupUtility.scale_model_on_import_if_extreme(clean_scene_with_only_models)
+    this.import_scale_factor = ModelCleanupUtility.scale_model_on_import_if_extreme(clean_scene_with_only_models)
 
     // preserved skinned meshes shouldn't be breaking apart mesh data
     // breaking apart skinned meshes converts it to a regular mesh which we don't want.
@@ -393,6 +403,10 @@ export class StepLoadModel extends EventTarget {
    * Diagnostic breakdown of the last import, or null if nothing is loaded yet.
    * Used by the "Analyze" option to help troubleshoot odd looking models.
    */
+  public get_import_scale_factor (): number {
+    return this.import_scale_factor
+  }
+
   public get_import_analysis (): ModelImportAnalysis | null {
     return this.import_analysis
   }

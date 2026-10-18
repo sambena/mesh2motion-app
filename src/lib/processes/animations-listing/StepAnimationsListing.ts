@@ -305,7 +305,7 @@ export class StepAnimationsListing extends EventTarget {
         console.error('Failed to load animations:', error)
         this.is_loading_default_animations = false
         this.custom_animation_importer.set_enabled(true)
-        // You could emit an error event here or show a user-friendly message
+        this.dispatchEvent(new CustomEvent('animations-load-failed', { detail: error }))
       })
   }
 
@@ -332,6 +332,7 @@ export class StepAnimationsListing extends EventTarget {
       if (this.ui.dom_animation_count != null) {
         this.ui.dom_animation_count.innerHTML = this.animation_search?.get_selected_export_animation_count().toString() ?? '0'
       }
+      this.update_download_button_enabled()
     })
 
     // add event listener to listen for filtered animations listing
@@ -341,6 +342,9 @@ export class StepAnimationsListing extends EventTarget {
     })
 
     this.play_animation(0) // play the first animation by default
+
+    // lets the embedding bridge know the clip list is ready
+    this.dispatchEvent(new CustomEvent('animations-loaded'))
   }
 
   private onAnimationLoadProgress (progress: AnimationLoadProgress): void {

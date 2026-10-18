@@ -298,7 +298,10 @@ export class EventListeners {
         this.bootstrap.download_settings
       )
         .then(() => {
-          new DownloadSuccessDialog().show()
+          // when embedded, the file went to the parent page instead of a download
+          if (!this.bootstrap.file_export_step.has_file_handler()) {
+            new DownloadSuccessDialog().show()
+          }
         })
         .catch((error: unknown) => {
           const error_message = error instanceof Error ? error.message : 'Failed to export file.'

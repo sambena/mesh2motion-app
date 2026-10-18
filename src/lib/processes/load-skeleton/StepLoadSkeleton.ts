@@ -46,6 +46,14 @@ export class StepLoadSkeleton extends EventTarget {
     return this.skeleton_scale_percentage
   }
 
+  /**
+   * Sets the skeleton scale without rebuilding the preview skeleton. The embedding bridge
+   * uses this when it places the bones at fitted joints, so animations scale to match.
+   */
+  public set_skeleton_scale (value: number): void {
+    this.skeleton_scale_percentage = value
+  }
+
   constructor (main_scene: Scene) {
     super()
     this._main_scene = main_scene

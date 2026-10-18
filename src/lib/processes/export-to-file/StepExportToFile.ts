@@ -12,11 +12,27 @@ import { type AnimationExportSelection } from '../animations-listing/interfaces/
 import { FbxTextureCompatibilityService } from './FbxTextureCompatibilityService.ts'
 import { PropsExportFilter } from '../animations-listing/props/PropsExportFilter.ts'
 
+// the parts of DownloadSettings an export reads, so callers can pass plain settings
+export type ExportSettings = Pick<DownloadSettings, 'bone_naming_structure' | 'export_contents' | 'export_format' | 'fbx_export_preset'>
+
+// receives the exported file instead of the browser download (used when embedded)
+export type ExportFileHandler = (blob: Blob, filename: string) => void
+
 // Note: EventTarget is a built-in interface and do not need to import it
 export class StepExportToFile extends EventTarget {
   private readonly ui: UI = UI.getInstance()
   private animation_clips_to_export: AnimationClip[] = []
   private readonly fbx_exporter: FBXExporter = new FBXExporter()
+  private file_handler: ExportFileHandler | null = null
+
+  /** Hand exported files to this function instead of downloading them. null restores downloads. */
+  public set_file_handler (handler: ExportFileHandler | null): void {
+    this.file_handler = handler
+  }
+
+  public has_file_handler (): boolean {
+    return this.file_handler !== null
+  }
 
   public set_animation_clips_to_export (all_animations_clips: AnimationClip[], export_selections: AnimationExportSelection[]): void {
     this.animation_clips_to_export = []
@@ -45,7 +61,7 @@ export class StepExportToFile extends EventTarget {
   public export (
     skinned_meshes: SkinnedMesh[], 
     filename: string = 'exported_model',
-    download_settings: DownloadSettings): Promise<void> {
+    download_settings: ExportSettings): Promise<void> {
 
     if (this.animation_clips_to_export.length === 0) {
       console.log('ERROR: No animation clips added to export')
@@ -204,6 +220,11 @@ export class StepExportToFile extends EventTarget {
   }
 
   private save_file (blob: Blob, filename: string): void {
+    if (this.file_handler !== null) {
+      this.file_handler(blob, filename)
+      return
+    }
+
     if (this.ui.dom_export_button_hidden_link != null) {
       this.ui.dom_export_button_hidden_link.href = URL.createObjectURL(blob)
       this.ui.dom_export_button_hidden_link.download = filename

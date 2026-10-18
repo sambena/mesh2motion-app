@@ -117,7 +117,8 @@ export class ModelCleanupUtility {
     return bounding_box
   }
 
-  public static scale_model_on_import_if_extreme (scene_object: Scene | Group<Object3DEventMap>): void {
+  // returns the scale factor applied (1 when the model was left alone)
+  public static scale_model_on_import_if_extreme (scene_object: Scene | Group<Object3DEventMap>): number {
     let scale_factor = 1.0
 
     const bounding_box = this.calculate_bounding_box(scene_object)
@@ -125,7 +126,7 @@ export class ModelCleanupUtility {
 
     if (height <= MODEL_HEIGHT_LIMIT) {
       console.log('Model a reasonable size, so no scaling applied: ', bounding_box, ' units is bounding box')
-      return
+      return scale_factor
     } else {
       console.log('Model is too tall, so scaling applied: ', bounding_box, ' units is bounding box')
     }
@@ -141,6 +142,8 @@ export class ModelCleanupUtility {
         child_obj.geometry.computeBoundingSphere()
       }
     })
+
+    return scale_factor
   }
 
   public static move_model_to_floor (mesh_data: Scene | Group<Object3DEventMap>): void {

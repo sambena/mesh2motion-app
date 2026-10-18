@@ -76,6 +76,9 @@ export class Mesh2MotionEngine {
   public transform_controls_type: TransformControlType = TransformControlType.Translation
   public transform_space_type: TransformSpace = TransformSpace.Global
 
+  // fires 'step-changed' (detail: the ProcessStep) after every step change, for the embedding bridge
+  public readonly events: EventTarget = new EventTarget()
+
   private readonly clock = new THREE.Clock()
   private readonly scene_environment: SceneEnvironmentManager
   private readonly eventListeners: EventListeners
@@ -461,6 +464,7 @@ export class Mesh2MotionEngine {
       }
     }
 
+    this.events.dispatchEvent(new CustomEvent('step-changed', { detail: this.process_step }))
     return this.process_step
   } // end process_step_changed()
 

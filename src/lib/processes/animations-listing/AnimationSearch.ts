@@ -491,6 +491,31 @@ export class AnimationSearch extends EventTarget {
     this.dispatchEvent(this.custom_event)
   }
 
+  /**
+   * Checks exactly the animations at these indices (into the full list) and unchecks the rest,
+   * as if the user had clicked them. Used by the embedding bridge.
+   */
+  public set_selected_animation_indices (indices: number[]): void {
+    const wanted = new Set(indices)
+    this.all_animations.forEach((animation, index) => {
+      animation.isChecked = wanted.has(index)
+      if (!animation.isChecked) {
+        animation.mirror_export_mode = 'none'
+      }
+    })
+
+    const filter_text = this.filter_input?.value.toLowerCase() ?? ''
+    this.render_filtered_animations(filter_text)
+
+    this.custom_event = new CustomEvent('export-options-changed', {
+      detail: {
+        selectedAnimations: this.get_selected_animation_indices(),
+        exportAnimationCount: this.get_selected_export_animation_count()
+      }
+    })
+    this.dispatchEvent(this.custom_event)
+  }
+
   private update_all_checkboxes_in_ui (checked_state: boolean): void {
     if (this.animation_list_container === null) {
       return

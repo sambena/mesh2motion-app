@@ -1,0 +1,11 @@
+/* Embedded mode (create.html?embed=1, see src/lib/bridge/): the parent page supplies the
+   navigation, so hide Mesh2Motion's own top bar and the marketing bits. */
+html.m2m-embed {
+  --navigation-height: 0px;
+}
+
+html.m2m-embed nav,
+html.m2m-embed #build-version,
+html.m2m-embed .request-animation-link {
+  display: none !important;
+}

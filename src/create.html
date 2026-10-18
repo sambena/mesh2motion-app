@@ -6,6 +6,8 @@
     <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- embedded mode: hide the top bar before the first paint (src/lib/bridge/) -->
+    <script>if (/[?&]embed=(1|true)(&|$)/.test(location.search)) document.documentElement.classList.add('m2m-embed')</script>
   </head>
   <body style="margin: 0">
     <script type="module" src="./CustomModelUploadBootstrap.ts"></script>
@@ -24,6 +26,7 @@
     <link rel="stylesheet" href="./settings-dropdown.css" crossorigin="anonymous" />
     <link rel="stylesheet" href="./offline.css" crossorigin="anonymous" />
     <link rel="stylesheet" href="./lib/processes/animations-listing/props/props.css" crossorigin="anonymous" />
+    <link rel="stylesheet" href="./lib/bridge/embed.css" crossorigin="anonymous" />
 
 
     <nav>

@@ -668,6 +668,16 @@ export class StepEditSkeleton extends EventTarget {
     return this.threejs_skeleton
   }
 
+  /**
+   * Call after moving bones from outside the editor (the embedding bridge placing fitted
+   * joints): makes the new positions the rest pose, clears undo, and refreshes the visuals.
+   */
+  public bones_moved_externally (): void {
+    this.independent_bone_movement.set_rest_pose(this.threejs_skeleton)
+    this.clear_undo_history()
+    this.dispatchEvent(new CustomEvent('skeletonTransformed'))
+  }
+
   public armature (): Object3D {
     return this.edited_armature
   }
