@@ -61,6 +61,9 @@ export async function add_preview_skeleton (
 
   // Load and customize skeleton
   const loaded_scene: Object3D<Object3DEventMap> = await load_skeleton(rig_file)
+  // the preview may have been removed while its file loaded (the step moved on, or another preview replaced it):
+  // then it must not come back, or it stays on screen beside the edit skeleton
+  if (preview_skeleton_group.parent === null) return loaded_scene
   if (skeleton_type === SkeletonType.Human) {
     const helper = new HandHelper()
     helper.modify_hand_skeleton(loaded_scene, hand_skeleton_type)
@@ -71,7 +74,6 @@ export async function add_preview_skeleton (
   skeleton_helper.name = 'preview_skeleton'
   preview_skeleton_group.add(skeleton_helper)
   preview_skeleton_group.scale.set(skeleton_scale, skeleton_scale, skeleton_scale)
-  root.add(preview_skeleton_group)
   return loaded_scene
 }
 
